@@ -1,14 +1,15 @@
 import lqip from "lqip-modern";
 import { createApi } from "unsplash-js";
+import { Photo } from "../types";
 
-type Photo = {
-  src: string;
-  thumb: string;
-  width: number;
-  height: number;
-  alt: string;
-  bluredDataUrl: string;
-};
+async function getDataUrl(url: string) {
+  const imgData = await fetch(url);
+
+  const arrayBufferData = await imgData.arrayBuffer();
+  const lqipData = await lqip(Buffer.from(arrayBufferData));
+
+  return lqipData.metadata.dataURIBase64;
+}
 
 const getImages = async (
   cli: ReturnType<typeof createApi>,
@@ -32,15 +33,6 @@ const getImages = async (
         alt: d.alt_description ?? `ocean-img-${i}`,
       };
     });
-
-    async function getDataUrl(url: string) {
-      const imgData = await fetch(url);
-
-      const arrayBufferData = await imgData.arrayBuffer();
-      const lqipData = await lqip(Buffer.from(arrayBufferData));
-
-      return lqipData.metadata.dataURIBase64;
-    }
 
     const photosArrWithDataUrl: Photo[] = [];
 

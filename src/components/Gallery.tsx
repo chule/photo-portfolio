@@ -1,7 +1,8 @@
+import type { LightGallery } from "lightgallery/lightgallery";
+import type { Photo } from "../types";
 import Masonry from "react-masonry-css";
 import Image from "next/image";
 import { useRef } from "react";
-import type { LightGallery } from "lightgallery/lightgallery";
 import LightGalleryComponent from "lightgallery/react";
 // import styles
 import "lightgallery/css/lightgallery.css";
@@ -11,14 +12,6 @@ import "lightgallery/css/lg-thumbnail.css";
 import lgThumbnail from "lightgallery/plugins/thumbnail";
 import lgZoom from "lightgallery/plugins/zoom";
 
-type Photo = {
-  src: string;
-  thumb: string;
-  width: number;
-  height: number;
-  alt: string;
-  bluredDataUrl: string;
-};
 
 type GalleryProps = {
   photos: Photo[];

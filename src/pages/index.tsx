@@ -3,33 +3,16 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import { Tab } from "@headlessui/react";
-import Masonry from "react-masonry-css";
 import classNames from "classnames";
-import lqip from "lqip-modern";
-
-import type { LightGallery } from "lightgallery/lightgallery";
-import LightGalleryComponent from "lightgallery/react";
-
-// import styles
-import "lightgallery/css/lightgallery.css";
-import "lightgallery/css/lg-zoom.css";
-import "lightgallery/css/lg-thumbnail.css";
-
-import lgThumbnail from "lightgallery/plugins/thumbnail";
-import lgZoom from "lightgallery/plugins/zoom";
 
 import background from "../../public/photography-bg.jpeg";
-// import ocean1 from "../../public/ocean-1.jpeg";
-// import ocean2 from "../../public/ocean-2.jpeg";
-// import ocean3 from "../../public/ocean-3.jpeg";
-// import ocean4 from "../../public/ocean-4.jpeg";
-// import ocean5 from "../../public/ocean-5.jpeg";
-import { useRef } from "react";
+
 import { createApi } from "unsplash-js";
 import nodeFetch from "node-fetch";
 
 import Gallery from "../components/Gallery";
 import getImages from "../utils/getImages";
+import type { Photo } from "../types";
 
 const tabs = [
   { key: "all", display: "All" },
@@ -37,32 +20,16 @@ const tabs = [
   { key: "forests", display: "Forests" },
 ];
 
-type Photo = {
-  src: string;
-  thumb: string;
-  width: number;
-  height: number;
-  alt: string;
-  bluredDataUrl: string;
-};
-
 type HomeProps = {
   oceans: Photo[];
   forests: Photo[];
 };
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
-  // const images = [ocean1, ocean2, ocean3, ocean4, ocean5];
-
   const unsplash = createApi({
     accessKey: process.env.UNSPLASH_ACCESS_KEY!,
     fetch: nodeFetch as unknown as typeof fetch,
   });
-
-  // console.log(response.response.results);
-
-  // const oceans = await getImages(unsplash, "oceans");
-  // const forests = await getImages(unsplash, "forests");
 
   const [oceans, forests] = await Promise.all([
     getImages(unsplash, "oceans"),
