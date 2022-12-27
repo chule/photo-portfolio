@@ -28,6 +28,9 @@ import { useRef } from "react";
 import { createApi } from "unsplash-js";
 import nodeFetch from "node-fetch";
 
+import Gallery from "../components/Gallery";
+import getImages from "../utils/getImages";
+
 const tabs = [
   { key: "all", display: "All" },
   { key: "oceans", display: "Oceans" },
@@ -58,8 +61,13 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
 
   // console.log(response.response.results);
 
-  const oceans = await getImages(unsplash, "oceans");
-  const forests = await getImages(unsplash, "forests");
+  // const oceans = await getImages(unsplash, "oceans");
+  // const forests = await getImages(unsplash, "forests");
+
+  const [oceans, forests] = await Promise.all([
+    getImages(unsplash, "oceans"),
+    getImages(unsplash, "forests"),
+  ]);
 
   return {
     props: {
@@ -140,106 +148,4 @@ const Home = ({ oceans, forests }: HomeProps) => {
   );
 };
 
-type GalleryProps = {
-  photos: Photo[];
-};
-
-const Gallery = ({ photos }: GalleryProps) => {
-  const lightboxRef = useRef<LightGallery | null>(null);
-  return (
-    <>
-      <Masonry className="flex gap-4" columnClassName="" breakpointCols={2}>
-        {photos.map((photo, i) => {
-          return (
-            <Image
-              src={photo.src}
-              width={photo.width}
-              height={photo.height}
-              alt={photo.alt}
-              className="my-4 cursor-pointer hover:opacity-70"
-              key={photo.src}
-              placeholder="blur"
-              blurDataURL={photo.bluredDataUrl}
-              onClick={() => {
-                lightboxRef.current?.openGallery(i);
-              }}
-            />
-          );
-        })}
-      </Masonry>
-
-      <LightGalleryComponent
-        onInit={(ref) => {
-          if (ref) {
-            lightboxRef.current = ref.instance;
-          }
-        }}
-        speed={500}
-        plugins={[lgThumbnail, lgZoom]}
-        dynamic
-        dynamicEl={photos.map((photo) => {
-          return {
-            src: photo.src,
-            thumb: photo.thumb,
-          };
-        })}
-      />
-    </>
-  );
-};
-
 export default Home;
-
-// async function getImages(query: string): Promise<Photo[]>{
-//   return []
-// }
-
-const getImages = async (
-  cli: ReturnType<typeof createApi>,
-  query: string
-): Promise<Photo[]> => {
-  const mappedPhotos: Photo[] = [];
-
-  const photos = await cli.search.getPhotos({
-    query: query,
-    page: 1,
-    perPage: 10,
-  });
-
-  if (photos.type === "success") {
-    const photosArr = photos.response.results.map((d, i) => {
-      return {
-        src: d.urls.full,
-        thumb: d.urls.thumb,
-        width: d.width,
-        height: d.height,
-        alt: d.alt_description ?? `ocean-img-${i}`,
-      };
-    });
-
-    async function getDataUrl(url: string) {
-      const imgData = await fetch(url);
-
-      const arrayBufferData = await imgData.arrayBuffer();
-      const lqipData = await lqip(Buffer.from(arrayBufferData));
-
-      return lqipData.metadata.dataURIBase64;
-    }
-
-    const photosArrWithDataUrl: Photo[] = [];
-
-    for (const photo of photosArr) {
-      const dataUrl = await getDataUrl(photo.src);
-      photosArrWithDataUrl.push({
-        ...photo,
-        bluredDataUrl: dataUrl,
-      });
-    }
-
-    mappedPhotos.push(...photosArrWithDataUrl);
-  } else {
-    console.error("could not get oceans");
-  }
-
-  return mappedPhotos;
-};
