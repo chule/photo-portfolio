@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Tab } from "@headlessui/react";
 import Masonry from "react-masonry-css";
 import classNames from "classnames";
+import lqip from "lqip-modern";
 
 import type { LightGallery } from "lightgallery/lightgallery";
 import LightGalleryComponent from "lightgallery/react";
@@ -39,6 +40,7 @@ type Photo = {
   width: number;
   height: number;
   alt: string;
+  bluredDataUrl: string;
 };
 
 type HomeProps = {
@@ -156,7 +158,8 @@ const Gallery = ({ photos }: GalleryProps) => {
               alt={photo.alt}
               className="my-4 cursor-pointer hover:opacity-70"
               key={photo.src}
-              // placeholder="blur"
+              placeholder="blur"
+              blurDataURL={photo.bluredDataUrl}
               onClick={() => {
                 lightboxRef.current?.openGallery(i);
               }}
@@ -213,7 +216,27 @@ const getImages = async (
         alt: d.alt_description ?? `ocean-img-${i}`,
       };
     });
-    mappedPhotos.push(...photosArr);
+
+    async function getDataUrl(url: string) {
+      const imgData = await fetch(url);
+
+      const arrayBufferData = await imgData.arrayBuffer();
+      const lqipData = await lqip(Buffer.from(arrayBufferData));
+
+      return lqipData.metadata.dataURIBase64;
+    }
+
+    const photosArrWithDataUrl: Photo[] = [];
+
+    for (const photo of photosArr) {
+      const dataUrl = await getDataUrl(photo.src);
+      photosArrWithDataUrl.push({
+        ...photo,
+        bluredDataUrl: dataUrl,
+      });
+    }
+
+    mappedPhotos.push(...photosArrWithDataUrl);
   } else {
     console.error("could not get oceans");
   }
