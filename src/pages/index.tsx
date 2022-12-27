@@ -18,11 +18,11 @@ import lgThumbnail from "lightgallery/plugins/thumbnail";
 import lgZoom from "lightgallery/plugins/zoom";
 
 import background from "../../public/photography-bg.jpeg";
-import ocean1 from "../../public/ocean-1.jpeg";
-import ocean2 from "../../public/ocean-2.jpeg";
-import ocean3 from "../../public/ocean-3.jpeg";
-import ocean4 from "../../public/ocean-4.jpeg";
-import ocean5 from "../../public/ocean-5.jpeg";
+// import ocean1 from "../../public/ocean-1.jpeg";
+// import ocean2 from "../../public/ocean-2.jpeg";
+// import ocean3 from "../../public/ocean-3.jpeg";
+// import ocean4 from "../../public/ocean-4.jpeg";
+// import ocean5 from "../../public/ocean-5.jpeg";
 import { useRef } from "react";
 import { createApi } from "unsplash-js";
 import nodeFetch from "node-fetch";
