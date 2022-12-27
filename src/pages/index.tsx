@@ -79,11 +79,11 @@ const Home = ({ oceans, forests }: HomeProps) => {
           <Tab.Group>
             <Tab.List className="flex items-center gap-12">
               {tabs.map((tab) => (
-                <Tab key={tab.key} className="p-2">
+                <Tab key={tab.key} className="p-2 outline-none">
                   {({ selected }) => (
                     <span
                       className={classNames(
-                        "text-lg uppercase",
+                        "text-lg uppercase ",
                         selected ? "text-white" : "text-stone-600"
                       )}
                     >
